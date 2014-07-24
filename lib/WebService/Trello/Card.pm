@@ -5,6 +5,8 @@ use Moose;
 use WebService::Trello;
 use WebService::Trello::Board;
 
+with qw(WebService::Trello::Role::PopulateFields);
+
 has service => (
     isa => 'WebService::Trello',
     is  => 'ro',
@@ -19,7 +21,7 @@ has id => (
     );
 
 has name => (
-    is => 'ro',
+    is => 'rw',
     isa => 'Str',
     );
 
@@ -30,20 +32,15 @@ has board => (
     );
 
 has idBoard => (
-    is => 'ro',
+    is => 'rw',
     isa => 'Str',
     );
 
+sub api_type { 'cards' }
 sub _build_board {
     my ($self) = @_;
 
     return WebService::Trello::Board->new( id => $self->idBoard );
-    }
-
-sub get {
-    my ($self) = @_;
-
-    my $doc = $self->get_url('cards', $self->id);
     }
 
 __PACKAGE__->meta->make_immutable;

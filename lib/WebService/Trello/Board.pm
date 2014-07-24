@@ -5,6 +5,8 @@ use Moose;
 use WebService::Trello;
 use WebService::Trello::Card;
 
+with qw(WebService::Trello::Role::PopulateFields);
+
 has id => (
     is => 'ro',
     isa => 'Str',
@@ -24,17 +26,7 @@ has service => (
     default => sub { WebService::Trello->new },
     );
 
-sub get {
-    my ($self) = @_;
-
-    my $doc = $self->get_url('boards', $self->id);
-    foreach my $field (keys %$doc) {
-        if (my $attr = $self->meta->get_attribute($field)) {
-            next unless $attr->get_write_method;
-            $self->$field($doc->{$field});
-            }
-        }
-    }
+sub api_type { 'boards' }
 
 sub get_cards {
     my ($self) = @_;
