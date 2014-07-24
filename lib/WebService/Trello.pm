@@ -3,6 +3,7 @@ package WebService::Trello;
 use Moose;
 
 use Config::Any;
+use DDP;
 use LWP::UserAgent;
 use HTTP::Request;
 use JSON;
@@ -17,6 +18,12 @@ has token => (
     is          => 'ro',
     isa         => 'Str',
     lazy_build  => 1,
+    );
+
+has default_inbox_list_name => (
+    is      => 'ro',
+    isa     => 'Str',
+    default => "Inbox"
     );
 
 has ua => (
@@ -89,7 +96,7 @@ sub _build_token {
     }
 
 sub get_url {
-    my ($self, $entity_type, $entity_id, $action) = @_; 
+    my ($self, $entity_type, $entity_id, $action) = @_;
 
     my $location = "$entity_type/$entity_id";
     $location .= "/$action" if $action;
@@ -97,10 +104,38 @@ sub get_url {
 
     my $req = HTTP::Request->new(GET => $url);
 
+    return $self->do_request($req);
+    }
+
+sub post_url {
+    my ($self, $args, @action_uri) = (shift, pop, @_);
+
+    my $url = $self->url.join "/", @action_uri;
+
+    $args->{$_} = $self->$_ for qw/ key token /;
+
+    my $req = HTTP::Request->new(POST => $url);
+    my $content = join "&", map { "$_=$args->{$_}" } keys %$args;
+    $req->content( $content );
+    $req->content_type("application/x-www-form-urlencoded");
+
+    return $self->do_request($req);
+    }
+
+sub do_request {
+    my ($self, $req) = @_;
+
     my $resp = $self->request($req);
 
     unless ($resp->is_success) {
-        die "Some kind of error occured. $url";
+        die sprintf <<_EOF, $req->as_string, $resp->as_string;
+Some kind of error occured.
+Request:
+%s
+
+Response:
+%s
+_EOF
         }
 
     return from_json( $resp->content );

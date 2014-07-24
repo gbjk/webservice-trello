@@ -4,6 +4,9 @@ use Moose;
 
 use WebService::Trello;
 use WebService::Trello::Card;
+use WebService::Trello::Organization;
+use WebService::Trello::List;
+use DDP;
 
 has id => (
     is => 'ro',
@@ -28,6 +31,33 @@ sub get {
     my ($self) = @_;
 
     my $doc = $self->get_url('boards', $self->id);
+    }
+
+sub get_by_name {
+    my ($class, $name) = @_;
+    my $self = $class->new;
+
+    my @boards = WebService::Trello::Organization->new->get_boards;
+
+    my ($board) = grep {$_->name eq $name} @boards;
+
+    return $board;
+    }
+
+sub get_lists {
+    my ($self) = @_;
+
+    my $doc = $self->get_url('board', $self->id, 'lists');
+    my @lists = map { WebService::Trello::List->new( %$_ ) } @$doc;
+
+    return @lists;
+    }
+
+sub get_list_by_name {
+    my ($self, $name) = @_;
+    my @lists = $self->get_lists;
+    my ($list) = grep {$_->name eq $name} @lists;
+    return $list;
     }
 
 sub get_cards {
