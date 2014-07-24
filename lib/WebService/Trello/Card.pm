@@ -13,7 +13,7 @@ with qw(WebService::Trello::Role::PopulateFields);
 has service => (
     isa => 'WebService::Trello',
     is  => 'ro',
-    handles => [qw/get_url post_url default_inbox_list_name/],
+    handles => [qw/get_url post_url default_inbox_list_name default_board_name/],
     lazy => 1,
     default => sub { WebService::Trello->new },
     );
@@ -56,14 +56,16 @@ sub api_type { 'cards' }
 sub _build_board {
     my ($self) = @_;
 
-    if (my $board = $self->idBoard){
-        return WebService::Trello::Board->new( id => $board );
+    if ($self->has_idBoard){
+        return WebService::Trello::Board->new( id => $self->idBoard );
         }
-    return;
+
+    return WebService::Trello::Board->get_by_name( $self->default_board_name );
     }
 
 sub _build_idBoard {
-    return ($_ = shift->board) ? $_->id : undef;
+    my ($self) = @_;
+    return $self->has_board ? $self->board : undef;
     }
 
 sub _build_list {
@@ -76,10 +78,6 @@ sub _build_idList {
 
 sub create {
     my ($self) = @_;
-
-    unless ($self->idBoard){
-        die "Must provide idBoard or board object\n";
-        }
 
     unless ($self->name){
         die "Errr. No. Name me. I must have a name\n";
