@@ -52,6 +52,11 @@ has idList => (
     lazy_build  => 1,
     );
 
+has pos => (
+    is => 'rw',
+    isa => 'Num',
+    );
+
 sub api_type { 'cards' }
 sub _build_board {
     my ($self) = @_;
