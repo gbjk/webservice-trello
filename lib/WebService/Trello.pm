@@ -22,6 +22,12 @@ has token => (
     lazy_build  => 1,
     );
 
+has default_board_name => (
+    is      => 'ro',
+    isa     => 'Str',
+    default => "Dev"
+    );
+
 has default_inbox_list_name => (
     is      => 'ro',
     isa     => 'Str',
