@@ -8,6 +8,8 @@ use LWP::UserAgent;
 use HTTP::Request;
 use JSON;
 
+our $VERSION = "0.0010";
+
 has key => (
     is          => 'ro',
     isa         => 'Str',
