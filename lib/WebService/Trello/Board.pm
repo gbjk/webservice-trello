@@ -12,7 +12,7 @@ has id => (
     );
 
 has name => (
-    is => 'ro',
+    is => 'rw',
     isa => 'Str',
     );
 
@@ -28,6 +28,12 @@ sub get {
     my ($self) = @_;
 
     my $doc = $self->get_url('boards', $self->id);
+    foreach my $field (keys %$doc) {
+        if (my $attr = $self->meta->get_attribute($field)) {
+            next unless $attr->get_write_method;
+            $self->$field($doc->{$field});
+            }
+        }
     }
 
 sub get_cards {
