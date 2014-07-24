@@ -3,7 +3,7 @@ package WebService::Trello::Organization;
 use Moose;
 
 use WebService::Trello;
-use WebService::Trello::Board
+use WebService::Trello::Board;
 
 with qw(WebService::Trello::Role::PopulateFields);
 

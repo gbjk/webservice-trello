@@ -19,7 +19,7 @@ has service => (
     );
 
 has id => (
-    is => 'ro',
+    is => 'rw',
     isa => 'Str',
     );
 
@@ -89,14 +89,15 @@ sub create {
         die "Must provide idList or list object\n";
         }
 
-    $self->post_url('cards', {
+    my $doc = $self->post_url('cards', {
         # TODO - meta on attributes say which attributes we want,
         # and a role to get them out
         idList      => $self->idList,
         name        => $self->name,
         });
 
-    return;
+    $self->populate_fields($doc);
+    return $self;
     }
 
 __PACKAGE__->meta->make_immutable;
