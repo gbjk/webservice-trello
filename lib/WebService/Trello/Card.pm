@@ -8,6 +8,8 @@ use WebService::Trello;
 use WebService::Trello::Board;
 use WebService::Trello::List;
 
+with qw(WebService::Trello::Role::PopulateFields);
+
 has service => (
     isa => 'WebService::Trello',
     is  => 'ro',
@@ -22,7 +24,7 @@ has id => (
     );
 
 has name => (
-    is => 'ro',
+    is => 'rw',
     isa => 'Str',
     );
 
@@ -33,7 +35,7 @@ has board => (
     );
 
 has idBoard => (
-    is => 'ro',
+    is => 'rw',
     isa => 'Str',
     lazy_build  => 1,
     );
@@ -50,6 +52,7 @@ has idList => (
     lazy_build  => 1,
     );
 
+sub api_type { 'cards' }
 sub _build_board {
     my ($self) = @_;
 
@@ -94,12 +97,6 @@ sub create {
         });
 
     return;
-    }
-
-sub get {
-    my ($self) = @_;
-
-    my $doc = $self->get_url('cards', $self->id);
     }
 
 __PACKAGE__->meta->make_immutable;

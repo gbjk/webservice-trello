@@ -8,6 +8,8 @@ use WebService::Trello::Organization;
 use WebService::Trello::List;
 use DDP;
 
+with qw(WebService::Trello::Role::PopulateFields);
+
 has id => (
     is => 'ro',
     isa => 'Str',
@@ -15,7 +17,7 @@ has id => (
     );
 
 has name => (
-    is => 'ro',
+    is => 'rw',
     isa => 'Str',
     );
 
@@ -27,11 +29,7 @@ has service => (
     default => sub { WebService::Trello->new },
     );
 
-sub get {
-    my ($self) = @_;
-
-    my $doc = $self->get_url('boards', $self->id);
-    }
+sub api_type { 'boards' }
 
 sub get_by_name {
     my ($class, $name) = @_;
