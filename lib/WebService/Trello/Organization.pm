@@ -3,7 +3,9 @@ package WebService::Trello::Organization;
 use Moose;
 
 use WebService::Trello;
-use WebService::Trello::Board
+use WebService::Trello::Board;
+
+with qw(WebService::Trello::Role::PopulateFields);
 
 has id => (
     is => 'ro',
@@ -19,11 +21,7 @@ has service => (
     default => sub { WebService::Trello->new },
     );
 
-sub get {
-    my ($self) = @_;
-
-    my $doc = $self->get_url('organizations', $self->id);
-    }
+sub api_type { 'organizations' }
 
 sub get_boards {
     my ($self) = @_;
