@@ -103,4 +103,11 @@ sub create {
     return $self;
     }
 
+sub add_comment {
+    my ($self, $comment) = @_;
+
+    $self->post_url('cards', $self->id, 'actions', 'comments', {
+        text => $comment,
+        });
+    }
 __PACKAGE__->meta->make_immutable;

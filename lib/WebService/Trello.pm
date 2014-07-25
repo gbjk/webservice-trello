@@ -123,9 +123,9 @@ sub post_url {
     $args->{$_} = $self->$_ for qw/ key token /;
 
     my $req = HTTP::Request->new(POST => $url);
-    my $content = join "&", map { "$_=$args->{$_}" } keys %$args;
+    my $content = encode_json($args);
     $req->content( $content );
-    $req->content_type("application/x-www-form-urlencoded");
+    $req->content_type("application/json");
 
     return $self->do_request($req);
     }
