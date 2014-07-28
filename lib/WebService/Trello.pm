@@ -101,14 +101,22 @@ sub _build_token {
     return $_[0]->from_config_or_input("token");
     }
 
-sub get_url {
-    my ($self, $entity_type, $entity_id, $action) = @_;
+sub delete_url {
+    shift->simple_url(DELETE => @_);
+    }
 
-    my $location = "$entity_type/$entity_id";
-    $location .= "/$action" if $action;
+sub get_url {
+    shift->simple_url(GET => @_);
+    }
+
+sub simple_url {
+    my ($self, $method) = (shift, shift);
+
+    my $location = join "/", @_;
+
     my $url = $self->url . "$location?" . join('&', map {$_ . "=" . $self->$_} qw/key token/);
 
-    my $req = HTTP::Request->new(GET => $url);
+    my $req = HTTP::Request->new($method => $url);
 
     return $self->do_request($req);
     }
