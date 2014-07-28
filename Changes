@@ -1,2 +1,5 @@
+NEXT
+ - Don't throw warnings on 404 on GET requests
+
 0.0100
  - Initial release

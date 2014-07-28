@@ -133,7 +133,11 @@ sub do_request {
 
     my $resp = $self->request($req);
 
-    unless ($resp->is_success) {
+    unless ($resp->is_success){
+        if ($resp->code == 404 && $req->method eq 'GET'){
+            return;
+            }
+
         die sprintf <<_EOF, $req->as_string, $resp->as_string;
 Some kind of error occured.
 Request:
