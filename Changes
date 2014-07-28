@@ -1,2 +1,6 @@
+0.0200
+ - Don't throw warnings on 404 on GET requests
+ - Added get and delete to Card
+
 0.0100
  - Initial release

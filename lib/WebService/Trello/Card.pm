@@ -13,7 +13,7 @@ with qw(WebService::Trello::Role::PopulateFields);
 has service => (
     isa => 'WebService::Trello',
     is  => 'ro',
-    handles => [qw/get_url post_url default_inbox_list_name default_board_name/],
+    handles => [qw/get_url post_url delete_url default_inbox_list_name default_board_name/],
     lazy => 1,
     default => sub { WebService::Trello->new },
     );
@@ -79,6 +79,29 @@ sub _build_list {
 
 sub _build_idList {
     return ($_ = shift->list) ? $_->id : undef;
+    }
+
+sub get {
+    my ($class, $id) = @_;
+    my $self = $class->new;
+
+    try {
+        my $doc = $self->get_url('card', $id);
+
+        $self->populate_fields($doc);
+
+        return $self;
+        }
+
+    return;
+    }
+
+sub delete {
+    my ($self) = @_;
+
+    my $doc = $self->delete_url( 'card', $self->id );
+
+    return;
     }
 
 sub create {
