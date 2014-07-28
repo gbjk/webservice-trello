@@ -81,6 +81,21 @@ sub _build_idList {
     return ($_ = shift->list) ? $_->id : undef;
     }
 
+sub get {
+    my ($class, $id) = @_;
+    my $self = $class->new;
+
+    try {
+        my $doc = $self->get_url('card', $id);
+
+        $self->populate_fields($doc);
+
+        return $self;
+        }
+
+    return;
+    }
+
 sub create {
     my ($self) = @_;
 
